@@ -12,9 +12,14 @@ import android.widget.Toast;
 
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+
 import com.ringdroid.WaveformView;
 import com.ringdroid.soundfile.SoundFile;
 
+import java.util.logging.Logger;
 import java.io.IOException;
 
 import static com.facebook.react.common.ReactConstants.TAG;
@@ -25,6 +30,7 @@ import static com.facebook.react.common.ReactConstants.TAG;
 
 public class OGWaveView extends FrameLayout {
 
+    private Logger logger = Logger.getLogger("OGWaveView");
 
     private final OGUIWaveView mUIWave;
     private MediaPlayer mMediaPlayer;
@@ -43,10 +49,16 @@ public class OGWaveView extends FrameLayout {
 
     private boolean mAutoplay = false;
     private boolean isCreated = false;
+    private boolean mHasBeenPlayed = false;
+    private boolean mHasEnded = true;
 
 
 
-
+    private void sendEvent(ReactContext context, String eventName, WritableMap params) {
+        context
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit(eventName, params);
+    }
     public OGWaveView(ReactContext context) {
         super(context);
         mContext = context;
@@ -94,11 +106,12 @@ public class OGWaveView extends FrameLayout {
     {
         mMediaPlayer.setPlaybackParams(mMediaPlayer.getPlaybackParams().setSpeed(speed));
     }
-
-    public void onPlay(boolean play)
-    {
+    public void onPlay(boolean play){
         if(play){
             this.mMediaPlayer.start();
+            if (!mHasBeenPlayed) {
+                mHasBeenPlayed = true;
+            }
         }else{
             if(mMediaPlayer != null && mMediaPlayer.isPlaying())
                 mMediaPlayer.pause();
@@ -182,6 +195,9 @@ public class OGWaveView extends FrameLayout {
             isCreated = true;
             createMediaPlayer();
         }
+        WritableMap map = new WritableNativeMap();
+        map.putDouble("duration", mMediaPlayer.getDuration());
+        sendEvent(mContext, "onPlaybackInitialize", map);
     }
 
     public void setSoundFile(SoundFile soundFile) {
@@ -190,6 +206,11 @@ public class OGWaveView extends FrameLayout {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(soundFile.getInputFile().getPath());
             mMediaPlayer.prepare();
+
+            WritableMap map = new WritableNativeMap();
+            map.putDouble("duration", mMediaPlayer.getDuration());
+            sendEvent(mContext, "onPlaybackInitialize", map);
+    
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -214,11 +235,27 @@ public class OGWaveView extends FrameLayout {
 
         public void run() {
             try {
+                Log.i("XSXGOT", "current position: " + String.valueOf(mMediaPlayer.getCurrentPosition()));
                 if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                    Log.i("XSXGOT", "isPlaying");
+                    if (mHasEnded) {
+                        Log.i("XSXGOT", "trackStart");
+                        mHasEnded = false;
+                        sendEvent(mContext, "onPlaybackStart", null);
+                    }
                     new UpdateProgressRequest().execute();
 
                     // seconds
-                    progressReportinghandler.postDelayed(progressRunnable, 100);
+                    progressReportinghandler.postDelayed(progressRunnable, 50);
+                } else if (mHasBeenPlayed && (mMediaPlayer.getCurrentPosition() <= mMediaPlayer.getDuration() + 2000)) {
+                    if (mMediaPlayer.getCurrentPosition() >= mMediaPlayer.getDuration()) {
+                        Log.i("XSXGOT", "trackEnd");
+                        mHasEnded = true;
+                        sendEvent(mContext, "onPlaybackEnd", null);
+                    } else {
+                        Log.i("XSXGOT", "trackPaused");
+                        sendEvent(mContext, "onPlaybackPause", null);
+                    }
                 }
             } catch (IllegalStateException ex) {
                 ex.getStackTrace();
@@ -244,13 +281,13 @@ public class OGWaveView extends FrameLayout {
         protected Float doInBackground(Void... params) {
 
             if (mMediaPlayer.isPlaying()) {
-                String offset = Integer.valueOf(
-                        mMediaPlayer.getCurrentPosition()).toString();
-
-
 
                 Float currrentPos = (float) mMediaPlayer.getCurrentPosition()/mMediaPlayer.getDuration();
 
+                WritableMap map = new WritableNativeMap();
+                map.putDouble("currentTime", mMediaPlayer.getCurrentPosition());
+
+                sendEvent(mContext, "onPlaybackProgress", map);
                 return currrentPos;
             }
             return null;
