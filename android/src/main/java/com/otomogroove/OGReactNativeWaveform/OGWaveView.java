@@ -11,8 +11,13 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+
 import com.ringdroid.WaveformView;
 
+import java.util.logging.Logger;
 import java.io.IOException;
 
 import static com.facebook.react.common.ReactConstants.TAG;
@@ -23,6 +28,7 @@ import static com.facebook.react.common.ReactConstants.TAG;
 
 public class OGWaveView extends FrameLayout {
 
+    private Logger logger = Logger.getLogger("OGWaveView");
 
     private final OGUIWaveView mUIWave;
     private MediaPlayer mMediaPlayer;
@@ -35,10 +41,16 @@ public class OGWaveView extends FrameLayout {
     private int mScrubColor;
 
     private boolean mAutoplay = false;
+    private boolean mHasBeenPlayed = false;
+    private boolean mHasEnded = true;
 
 
 
-
+    private void sendEvent(ReactContext context, String eventName, WritableMap params) {
+        context
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit(eventName, params);
+    }
     public OGWaveView(ReactContext context) {
         super(context);
         mContext = context;
@@ -66,11 +78,15 @@ public class OGWaveView extends FrameLayout {
     public void onPlay(boolean play){
         if(play){
             this.mMediaPlayer.start();
-
+            if (!mHasBeenPlayed) {
+                mHasBeenPlayed = true;
+            }
 
         }else{
-            if(mMediaPlayer.isPlaying())
-                    mMediaPlayer.pause();
+            if(mMediaPlayer.isPlaying()) {
+                mMediaPlayer.pause();
+
+            }
 
         }
 
@@ -112,10 +128,15 @@ public class OGWaveView extends FrameLayout {
             e.printStackTrace();
         }
 
+        logger.info("duration: " + String.valueOf(mMediaPlayer.getDuration()));
         Log.e(TAG, "setURI: mMediaPlayer is"+mMediaPlayer.getDuration());
 
         addView(this.mWaveView);
         addView(this.mUIWave);
+
+        WritableMap map = new WritableNativeMap();
+        map.putDouble("duration", mMediaPlayer.getDuration());
+        sendEvent(mContext, "onPlaybackInitialize", map);
 
         this.mWaveView.setOnTouchListener(new OnTouchListener(){
 
@@ -152,11 +173,27 @@ public class OGWaveView extends FrameLayout {
 
         public void run() {
             try {
+                logger.info("current position: " + String.valueOf(mMediaPlayer.getCurrentPosition()));
                 if (mMediaPlayer.isPlaying()) {
+                    logger.info("isPlaying");
+                    if (mHasEnded) {
+                        logger.info("trackStart");
+                        mHasEnded = false;
+                        sendEvent(mContext, "onPlaybackStart", null);
+                    }
                     new UpdateProgressRequest().execute();
 
                     // seconds
-                    progressReportinghandler.postDelayed(progressRunnable, 100);
+                    progressReportinghandler.postDelayed(progressRunnable, 50);
+                } else if (mHasBeenPlayed && (mMediaPlayer.getCurrentPosition() <= mMediaPlayer.getDuration() + 2000)) {
+                    if (mMediaPlayer.getCurrentPosition() >= mMediaPlayer.getDuration()) {
+                        logger.info("trackEnd");
+                        mHasEnded = true;
+                        sendEvent(mContext, "onPlaybackEnd", null);
+                    } else {
+                        logger.info("trackPaused");
+                        sendEvent(mContext, "onPlaybackPause", null);
+                    }
                 }
             } catch (IllegalStateException ex) {
                 ex.getStackTrace();
@@ -179,13 +216,13 @@ public class OGWaveView extends FrameLayout {
         protected Float doInBackground(Void... params) {
 
             if (mMediaPlayer.isPlaying()) {
-                String offset = Integer.valueOf(
-                        mMediaPlayer.getCurrentPosition()).toString();
-
-
 
                 Float currrentPos = (float) mMediaPlayer.getCurrentPosition()/mMediaPlayer.getDuration();
 
+                WritableMap map = new WritableNativeMap();
+                map.putDouble("currentTime", mMediaPlayer.getCurrentPosition());
+
+                sendEvent(mContext, "onPlaybackProgress", map);
                 return currrentPos;
             }
             return null;
