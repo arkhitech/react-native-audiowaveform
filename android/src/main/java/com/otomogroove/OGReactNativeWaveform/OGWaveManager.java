@@ -9,6 +9,7 @@ import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -36,7 +37,6 @@ public class OGWaveManager extends SimpleViewManager<OGWaveView> implements Life
 
     @Override
     public String getName() {
-
         return REACT_CLASS;
     }
 
@@ -47,7 +47,7 @@ public class OGWaveManager extends SimpleViewManager<OGWaveView> implements Life
         context.addLifecycleEventListener(this);
         mcontext = context;
 
-       // deleteFiles(Environment.getExternalStorageDirectory().toString(),"mp3");
+        // deleteFiles(Environment.getExternalStorageDirectory().toString(),"mp3");
         OGWaveView mWaveView = new OGWaveView(context);
 
         mWaveView.setWaveformListener(this);
@@ -75,7 +75,7 @@ public class OGWaveManager extends SimpleViewManager<OGWaveView> implements Life
         }
     }
 
-   @ReactProp(name = "src")
+    @ReactProp(name = "src")
     public void setSrc(OGWaveView view, @Nullable ReadableMap src) {
         view.setURI(src.getString("uri"));
     }
@@ -87,7 +87,15 @@ public class OGWaveManager extends SimpleViewManager<OGWaveView> implements Life
 
     }
 
+    @Override
+    public void receiveCommand(OGWaveView view, int commandId, @Nullable ReadableArray args) {
+        super.receiveCommand(view, commandId, args);
+        Log.i("XSXGOT", args.toString());
 
+        if (commandId == 0) {
+            view.seekPosition(args.getInt(0));
+        }
+    }
 
     @ReactProp(name = "autoPlay", defaultBoolean = false)
     public void setAutoPlay(OGWaveView view, boolean autoPlay) {
@@ -106,23 +114,23 @@ public class OGWaveManager extends SimpleViewManager<OGWaveView> implements Life
     @ReactProp(name = "play")
     public void setPlay(OGWaveView view, @Nullable boolean play) {
 
-            view.onPlay(play);
+        view.onPlay(play);
 
     }
 
 
 
-   /** @ReactProp(name = "pause")
+    /** @ReactProp(name = "pause")
     public void setPause(OGWaveView view, @Nullable Callback pause){
-       // view.onPlay();
+    // view.onPlay();
 
     }
 
-    @ReactProp(name = "stop")
-    public void setStop(OGWaveView view, @Nullable Callback stop){
-        //view.onPlay();
+     @ReactProp(name = "stop")
+     public void setStop(OGWaveView view, @Nullable Callback stop){
+     //view.onPlay();
 
-    }**/
+     }**/
 
 
     @Override

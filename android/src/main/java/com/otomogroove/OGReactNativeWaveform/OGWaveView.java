@@ -75,6 +75,10 @@ public class OGWaveView extends FrameLayout {
         mUIWave.invalidate();
     }
 
+    public void seekPosition(int pos){
+        mMediaPlayer.seekTo(pos);
+    }
+
     public void onPlay(boolean play){
         if(play){
             this.mMediaPlayer.start();
