@@ -106,6 +106,10 @@ public class OGWaveView extends FrameLayout {
     {
         mMediaPlayer.setPlaybackParams(mMediaPlayer.getPlaybackParams().setSpeed(speed));
     }
+    public void seekPosition(int pos){
+        mMediaPlayer.seekTo(pos);
+    }
+
     public void onPlay(boolean play){
         if(play){
             this.mMediaPlayer.start();
