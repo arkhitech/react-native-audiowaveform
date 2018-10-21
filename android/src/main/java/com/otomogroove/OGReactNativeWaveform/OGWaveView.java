@@ -48,8 +48,8 @@ public class OGWaveView extends FrameLayout {
 
     private void sendEvent(ReactContext context, String eventName, WritableMap params) {
         context
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit(eventName, params);
     }
     public OGWaveView(ReactContext context) {
         super(context);
@@ -114,6 +114,14 @@ public class OGWaveView extends FrameLayout {
 
         progressReportinghandler.postDelayed(progressRunnable, 500);
 
+    }
+
+    public void zoomIn(){
+        mWaveView.zoomIn();
+    }
+
+    public void zoomOut(){
+        mWaveView.zoomOut();
     }
 
     public void setURI(String uri){
