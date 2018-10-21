@@ -661,7 +661,7 @@ public class WaveformView extends View {
         } else {
             mZoomLevel = 0;
         }
-
+        mZoomLevel = 4;
         mInitialized = true;
     }
 
