@@ -56,8 +56,8 @@ public class OGWaveView extends FrameLayout {
 
     private void sendEvent(ReactContext context, String eventName, WritableMap params) {
         context
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit(eventName, params);
     }
     public OGWaveView(ReactContext context) {
         super(context);
@@ -182,6 +182,14 @@ public class OGWaveView extends FrameLayout {
         });
     }
 
+    public void zoomIn(){
+      mWaveView.zoomIn();
+    }
+
+    public void zoomOut(){
+        mWaveView.zoomOut();
+    }
+
     public void setURI(String uri){
         // Create the MediaPlayer
 
@@ -192,13 +200,26 @@ public class OGWaveView extends FrameLayout {
             return;
         }
 
-
         this.mWaveView.setmURI(uri, this.mStartOffset, this.mEndOffset);
 
         if (!isCreated) {
             isCreated = true;
             createMediaPlayer();
         }
+
+        try 
+        {
+          mMediaPlayer.setDataSource(uri);
+          mMediaPlayer.prepare();
+        } 
+        catch (IOException e) 
+        {
+            e.printStackTrace();
+        }
+
+        logger.info("duration: " + String.valueOf(mMediaPlayer.getDuration()));
+        Log.e(TAG, "setURI: mMediaPlayer is"+mMediaPlayer.getDuration());
+
         WritableMap map = new WritableNativeMap();
         map.putDouble("duration", mMediaPlayer.getDuration());
         sendEvent(mContext, "onPlaybackInitialize", map);

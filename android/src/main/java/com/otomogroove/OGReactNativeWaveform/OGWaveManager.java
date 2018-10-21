@@ -172,6 +172,10 @@ public class OGWaveManager extends SimpleViewManager<OGWaveView> implements Life
 
         if (commandId == 0) {
             view.seekPosition(args.getInt(0));
+        } else if (commandId == 1) {
+            view.zoomIn();
+        } else if (commandId == 2) {
+            view.zoomOut();
         }
     }
 
