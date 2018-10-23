@@ -32,7 +32,10 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.ringdroid.soundfile.SoundFile;
 
 import java.io.BufferedInputStream;
@@ -222,6 +225,7 @@ public class WaveformView extends View {
 
     private String mURI;
 
+    private ReactContext mContext;
     private SoundFile mSoundFile;
     private int[] mLenByZoomLevel;
     private double[][] mValuesByZoomLevel;
@@ -243,9 +247,16 @@ public class WaveformView extends View {
     private boolean mInitialized;
     private int mWaveColor;
 
-    public WaveformView(Context context) {
+    private void sendEvent(ReactContext context, String eventName, WritableMap params) {
+        context
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit(eventName, params);
+    }
+
+    public WaveformView(ReactContext context) {
         super(context);
 
+        mContext = context;
         // We don't want keys, the markers get these
         setFocusable(false);
 
@@ -617,6 +628,8 @@ public class WaveformView extends View {
         }
         mZoomLevel = 4;
         mInitialized = true;
+
+        sendEvent(mContext, "onPlaybackInitialize", null);
     }
 
     /**
