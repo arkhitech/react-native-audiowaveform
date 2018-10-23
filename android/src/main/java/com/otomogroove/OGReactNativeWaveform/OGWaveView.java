@@ -28,8 +28,6 @@ import static com.facebook.react.common.ReactConstants.TAG;
 
 public class OGWaveView extends FrameLayout {
 
-    private Logger logger = Logger.getLogger("OGWaveView");
-
     private final OGUIWaveView mUIWave;
     private MediaPlayer mMediaPlayer;
     private WaveformView mWaveView;
@@ -140,7 +138,7 @@ public class OGWaveView extends FrameLayout {
             e.printStackTrace();
         }
 
-        logger.info("duration: " + String.valueOf(mMediaPlayer.getDuration()));
+        Log.i("XSXGOT", "duration: " + String.valueOf(mMediaPlayer.getDuration()));
         Log.e(TAG, "setURI: mMediaPlayer is"+mMediaPlayer.getDuration());
 
         addView(this.mWaveView);
@@ -148,7 +146,7 @@ public class OGWaveView extends FrameLayout {
 
         WritableMap map = new WritableNativeMap();
         map.putDouble("duration", mMediaPlayer.getDuration());
-        sendEvent(mContext, "onPlaybackInitialize", map);
+        sendEvent(mContext, "onPlaybackDuration", map);
 
         this.mWaveView.setOnTouchListener(new OnTouchListener(){
 
@@ -185,11 +183,11 @@ public class OGWaveView extends FrameLayout {
 
         public void run() {
             try {
-                logger.info("current position: " + String.valueOf(mMediaPlayer.getCurrentPosition()));
+                Log.i("XSXGOT", "current position: " + String.valueOf(mMediaPlayer.getCurrentPosition()));
                 if (mMediaPlayer.isPlaying()) {
-                    logger.info("isPlaying");
+                    Log.i("XSXGOT", "isPlaying");
                     if (mHasEnded) {
-                        logger.info("trackStart");
+                        Log.i("XSXGOT", "trackStart");
                         mHasEnded = false;
                         sendEvent(mContext, "onPlaybackStart", null);
                     }
@@ -199,11 +197,11 @@ public class OGWaveView extends FrameLayout {
                     progressReportinghandler.postDelayed(progressRunnable, 50);
                 } else if (mHasBeenPlayed && (mMediaPlayer.getCurrentPosition() <= mMediaPlayer.getDuration() + 2000)) {
                     if (mMediaPlayer.getCurrentPosition() >= mMediaPlayer.getDuration()) {
-                        logger.info("trackEnd");
+                        Log.i("XSXGOT", "trackEnd");
                         mHasEnded = true;
                         sendEvent(mContext, "onPlaybackEnd", null);
                     } else {
-                        logger.info("trackPaused");
+                        Log.i("XSXGOT", "trackPaused");
                         sendEvent(mContext, "onPlaybackPause", null);
                     }
                 }
