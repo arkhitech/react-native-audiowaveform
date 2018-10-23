@@ -30,8 +30,6 @@ import static com.facebook.react.common.ReactConstants.TAG;
 
 public class OGWaveView extends FrameLayout {
 
-    private Logger logger = Logger.getLogger("OGWaveView");
-
     private final OGUIWaveView mUIWave;
     private MediaPlayer mMediaPlayer;
     private WaveformView mWaveView;
@@ -217,15 +215,15 @@ public class OGWaveView extends FrameLayout {
             e.printStackTrace();
         }
 
-        logger.info("duration: " + String.valueOf(mMediaPlayer.getDuration()));
+        Log.i("XSXGOT", "duration: " + String.valueOf(mMediaPlayer.getDuration()));
         Log.e(TAG, "setURI: mMediaPlayer is"+mMediaPlayer.getDuration());
 
         WritableMap map = new WritableNativeMap();
         map.putDouble("duration", mMediaPlayer.getDuration());
-        sendEvent(mContext, "onPlaybackInitialize", map);
-    }
+        sendEvent(mContext, "onPlaybackDuration", map);
+      }
 
-    public void setSoundFile(SoundFile soundFile) {
+      public void setSoundFile(SoundFile soundFile) {
         try {
             Log.d("XSXGOT", "Setting datasource to: " + soundFile.getInputFile().getPath());
             mMediaPlayer.reset();
@@ -234,7 +232,7 @@ public class OGWaveView extends FrameLayout {
 
             WritableMap map = new WritableNativeMap();
             map.putDouble("duration", mMediaPlayer.getDuration());
-            sendEvent(mContext, "onPlaybackInitialize", map);
+            sendEvent(mContext, "onPlaybackDuration", map);
     
         } catch (IOException e) {
             e.printStackTrace();
