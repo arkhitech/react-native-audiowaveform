@@ -196,7 +196,8 @@ public class OGWaveView extends FrameLayout {
                     // seconds
                     progressReportinghandler.postDelayed(progressRunnable, 50);
                 } else if (mHasBeenPlayed && (mMediaPlayer.getCurrentPosition() <= mMediaPlayer.getDuration() + 2000)) {
-                    if (mMediaPlayer.getCurrentPosition() >= mMediaPlayer.getDuration()) {
+                    Log.i("XSXGOT", "currentPositon: " + mMediaPlayer.getCurrentPosition());
+                    if (mMediaPlayer.getCurrentPosition() >= mMediaPlayer.getDuration() - 150) {
                         Log.i("XSXGOT", "trackEnd");
                         mHasEnded = true;
                         sendEvent(mContext, "onPlaybackEnd", null);
