@@ -36,6 +36,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.ringdroid.soundfile.ProgressListener;
 import com.ringdroid.soundfile.SoundFile;
 
 import java.io.BufferedInputStream;
@@ -155,7 +156,8 @@ public class WaveformView extends View {
             }
 
             try {
-                soundFile = SoundFile.create(filePath,null);
+                SoundFile.ProgressListener progressListener = new ProgressListener(mContext);
+                soundFile = SoundFile.create(filePath, progressListener);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (SoundFile.InvalidInputException e) {
@@ -629,7 +631,7 @@ public class WaveformView extends View {
         mZoomLevel = 4;
         mInitialized = true;
 
-        sendEvent(mContext, "onPlaybackInitialize", null);
+        sendEvent(mContext, "onPlaybackReady", null);
     }
 
     /**

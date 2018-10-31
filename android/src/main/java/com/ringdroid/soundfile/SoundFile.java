@@ -99,8 +99,8 @@ public class SoundFile {
     // Create and return a SoundFile object using the file fileName.
     public static SoundFile create(String fileName,
                                    ProgressListener progressListener)
-        throws java.io.FileNotFoundException,
-               java.io.IOException, InvalidInputException {
+            throws java.io.FileNotFoundException,
+            java.io.IOException, InvalidInputException {
         // First check that the file exists and that its extension is supported.
         File f = new File(fileName);
         if (!f.exists()) {
@@ -115,7 +115,7 @@ public class SoundFile {
             return null;
         }
         SoundFile soundFile = new SoundFile();
-        //soundFile.setProgressListener(progressListener);
+        soundFile.setProgressListener(progressListener);
         soundFile.ReadFile(f);
         return soundFile;
     }
@@ -174,17 +174,17 @@ public class SoundFile {
     public ShortBuffer getSamples() {
         return null;
         /**if (mDecodedSamples != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
-                Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
-                // Hack for Nougat where asReadOnlyBuffer fails to respect byte ordering.
-                // See https://code.google.com/p/android/issues/detail?id=223824
-                return mDecodedSamples;
-            } else {
-                return mDecodedSamples.asReadOnlyBuffer();
-            }
-        } else {
-            return null;
-        }**/
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+         Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+         // Hack for Nougat where asReadOnlyBuffer fails to respect byte ordering.
+         // See https://code.google.com/p/android/issues/detail?id=223824
+         return mDecodedSamples;
+         } else {
+         return mDecodedSamples.asReadOnlyBuffer();
+         }
+         } else {
+         return null;
+         }**/
     }
 
     // A SoundFile object should only be created using the static methods create() and record().
@@ -196,8 +196,8 @@ public class SoundFile {
     }
 
     private void ReadFile(File inputFile)
-        throws java.io.FileNotFoundException,
-               java.io.IOException, InvalidInputException {
+            throws java.io.FileNotFoundException,
+            java.io.IOException, InvalidInputException {
         MediaExtractor extractor = new MediaExtractor();
         MediaFormat format = null;
         int i;
@@ -223,7 +223,7 @@ public class SoundFile {
         mSampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
         // Expected total number of samples per channel.
         int expectedNumSamples =
-            (int)((format.getLong(MediaFormat.KEY_DURATION) / 1000000.f) * mSampleRate + 0.5f);
+                (int)((format.getLong(MediaFormat.KEY_DURATION) / 1000000.f) * mSampleRate + 0.5f);
 
         MediaCodec codec = MediaCodec.createDecoderByType(format.getString(MediaFormat.KEY_MIME));
         codec.configure(format, null, null, 0);
@@ -245,6 +245,7 @@ public class SoundFile {
         // only once.
         mDecodedBytes = ByteBuffer.allocate(1<<20);
         Boolean firstSampleData = true;
+        Log.i("XSXGOT", "about to read data from file");
         while (true) {
             // read data from file and feed it to the decoder input buffers.
             int inputBufferIndex = codec.dequeueInputBuffer(100);
@@ -396,6 +397,7 @@ public class SoundFile {
                     ((float)getSamplesPerFrame() / mSampleRate));
         }
         mDecodedSamples.rewind();
+        Log.i("XSXGOT", "file read");
         // DumpSamples();  // Uncomment this line to dump the samples in a TSV file.
     }
 
@@ -422,7 +424,7 @@ public class SoundFile {
                 AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,
                 minBufferSize
-                );
+        );
 
         // Allocate memory for 20 seconds first. Reallocate later if more is needed.
         mDecodedBytes = ByteBuffer.allocate(20 * mSampleRate * 2);
