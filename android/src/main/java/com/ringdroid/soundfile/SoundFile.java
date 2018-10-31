@@ -124,14 +124,6 @@ public class SoundFile {
                                    ProgressListener progressListener)
             throws java.io.FileNotFoundException,
             java.io.IOException, InvalidInputException {
-
-        // Check if passed data URI and replace with temporary filename
-        if (fileName.startsWith("data:"))
-        {
-            Log.d("XSXGOT", "Parsing data URI: " + fileName);
-            fileName = createFileFromDataUri(fileName).getPath();
-        }
-
         // First check that the file exists and that its extension is supported.
         File f = new File(fileName);
         if (!f.exists()) {
@@ -151,7 +143,7 @@ public class SoundFile {
             return null;
         }
         SoundFile soundFile = new SoundFile();
-        //soundFile.setProgressListener(progressListener);
+        soundFile.setProgressListener(progressListener);
         soundFile.ReadFile(f);
         return soundFile;
     }
@@ -281,6 +273,7 @@ public class SoundFile {
         // only once.
         mDecodedBytes = ByteBuffer.allocate(1<<20);
         Boolean firstSampleData = true;
+        Log.i("XSXGOT", "about to read data from file");
         while (true) {
             // read data from file and feed it to the decoder input buffers.
             int inputBufferIndex = codec.dequeueInputBuffer(100);
@@ -432,6 +425,7 @@ public class SoundFile {
                     ((float)getSamplesPerFrame() / mSampleRate));
         }
         mDecodedSamples.rewind();
+        Log.i("XSXGOT", "file read");
         // DumpSamples();  // Uncomment this line to dump the samples in a TSV file.
     }
 
