@@ -20,7 +20,7 @@ public class OGWavePackage implements ReactPackage {
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-
+        modules.add(new OGWaveModule(reactContext));
 
         return modules;
     }

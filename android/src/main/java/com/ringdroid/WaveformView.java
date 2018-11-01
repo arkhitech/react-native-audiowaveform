@@ -108,6 +108,7 @@ public class WaveformView extends View {
          * */
         @Override
         protected SoundFile doInBackground(String... f_url) {
+            Log.i("XSXGOT", "downloading from background");
             int count;
             String filePath = f_url[1];
             SoundFile soundFile = null;
@@ -149,7 +150,7 @@ public class WaveformView extends View {
                 // closing streams
                 output.close();
                 input.close();
-                Log.e("XSXGOT","Audio file complented + "+filePath);
+                Log.e("XSXGOT", "Audio file completed + " + filePath);
 
             } catch (Exception e) {
                 Log.e("XSXGOT Error: ", e.getMessage());
@@ -188,11 +189,13 @@ public class WaveformView extends View {
         protected void onPostExecute(SoundFile soundFile) {
             // dismiss the dialog after the file was downloaded
             if(soundFile!=null) {
+                Log.i("XSXGOT","soundfile is not null");
                 setSoundFile(soundFile);
                 recomputeHeights(8f);
                 invalidate();
             }else{
                 Log.e("XSXGOT","soundfile is null");
+                setmURI(mURI);
             }
 
         }
