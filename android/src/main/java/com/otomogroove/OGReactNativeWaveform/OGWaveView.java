@@ -18,6 +18,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import com.ringdroid.WaveformView;
 import com.ringdroid.soundfile.SoundFile;
+import com.otomogroove.OGReactNativeWaveform.OGWaveModule.WaveformMeta;
 
 import java.util.logging.Logger;
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class OGWaveView extends FrameLayout {
     private final OGUIWaveView mUIWave;
     private MediaPlayer mMediaPlayer;
     private WaveformView mWaveView;
+    private WaveformMeta mWaveMeta;
 
     private String componentID;
 
@@ -54,8 +56,8 @@ public class OGWaveView extends FrameLayout {
 
     private void sendEvent(ReactContext context, String eventName, WritableMap params) {
         context
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-            .emit(eventName, params);
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit(eventName, params);
     }
     public OGWaveView(ReactContext context) {
         super(context);
@@ -63,6 +65,7 @@ public class OGWaveView extends FrameLayout {
 
         mWaveView = new WaveformView(mContext, this);
         mUIWave = new OGUIWaveView(mContext);
+        mWaveMeta = new WaveformMeta(mContext);
 
 
         mUIWave.setBackgroundColor(Color.TRANSPARENT);
@@ -215,8 +218,11 @@ public class OGWaveView extends FrameLayout {
             e.printStackTrace();
         }
 
-        Log.i("XSXGOT", "duration: " + String.valueOf(mMediaPlayer.getDuration()));
-        Log.e(TAG, "setURI: mMediaPlayer is"+mMediaPlayer.getDuration());
+        if (mMediaPlayer.getDuration() < 0 || !((mWaveMeta.getmRecordingDuration() > mMediaPlayer.getDuration() - 1000) && mWaveMeta.getmRecordingDuration() < mMediaPlayer.getDuration() + 1000)) {
+            Log.i("XSXGOT", "restarting due to not playing error");
+            setURI(uri);
+            return;
+        }
 
         WritableMap map = new WritableNativeMap();
         map.putDouble("duration", mMediaPlayer.getDuration());
@@ -271,7 +277,7 @@ public class OGWaveView extends FrameLayout {
                     // seconds
                     progressReportinghandler.postDelayed(progressRunnable, 50);
                 } else if (mHasBeenPlayed && (mMediaPlayer.getCurrentPosition() <= mMediaPlayer.getDuration() + 2000)) {
-                    Log.i("XSXGOT", "currentPositon: " + mMediaPlayer.getCurrentPosition());
+                    Log.i("XSXGOT", "currentPosition: " + mMediaPlayer.getCurrentPosition());
                     if (mMediaPlayer.getCurrentPosition() >= mMediaPlayer.getDuration() - 150) {
                         Log.i("XSXGOT", "trackEnd");
                         mHasEnded = true;

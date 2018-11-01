@@ -131,6 +131,7 @@ public class WaveformView extends View {
          * */
         @Override
         protected SoundFile doInBackground(String... f_url) {
+            Log.i("XSXGOT", "downloading from background");
             int count;
             String filePath = f_url[1];
             String tempPath = Environment.getExternalStorageDirectory().toString() + "/"+"temp"+".wav";
@@ -172,6 +173,7 @@ public class WaveformView extends View {
                 // closing streams
                 output.close();
                 input.close();
+                Log.e("XSXGOT", "Audio file completed + " + filePath);
 
                 final CheapSoundFile.ProgressListener listener = new CheapSoundFile.ProgressListener() {
                     public boolean reportProgress(double frac) {
@@ -228,11 +230,13 @@ public class WaveformView extends View {
         protected void onPostExecute(SoundFile soundFile) {
             // dismiss the dialog after the file was downloaded
             if(soundFile!=null) {
+                Log.i("XSXGOT","soundfile is not null");
                 setSoundFile(soundFile);
                 recomputeHeights(8f);
                 invalidate();
             }else{
                 Log.e("XSXGOT","soundfile is null");
+                setmURI(mURI);
             }
 
         }
