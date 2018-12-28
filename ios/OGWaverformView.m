@@ -77,6 +77,7 @@
     NSURL *soundURL = [NSURL fileURLWithPath:_soundPath];
     NSError *error = nil;
     _player =[[AVPlayer alloc]initWithURL:soundURL];
+    _ogEventEmitter = [OGEventEmitter new];
     
     // Subscribe to the AVPlayerItem's DidPlayToEndTime notification.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:_player.currentItem];
@@ -91,7 +92,7 @@
     // Will be called when AVPlayer finishes playing playerItem
     NSLog(@"play finished ::: %@",_soundPath);
     [_player seekToTime:CMTimeMake(0,1)];
-
+    [_ogEventEmitter itemDidFinishPlaying: notification];
 }
 
 -(void)setAutoPlay:(BOOL)autoPlay{

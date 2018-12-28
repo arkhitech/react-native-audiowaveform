@@ -141,11 +141,11 @@ public class OGWaveView extends FrameLayout {
             e.printStackTrace();
         }
 
-        if (mMediaPlayer.getDuration() < 0 || !((mWaveMeta.getmRecordingDuration() > mMediaPlayer.getDuration() - 1000) && mWaveMeta.getmRecordingDuration() < mMediaPlayer.getDuration() + 1000)) {
-            Log.i("XSXGOT", "restarting due to not playing error");
-            setURI(uri);
-            return;
-        }
+       // if (mMediaPlayer.getDuration() < 0 || !((mWaveMeta.getmRecordingDuration() > mMediaPlayer.getDuration() - 1000) && mWaveMeta.getmRecordingDuration() < mMediaPlayer.getDuration() + 1000)) {
+         //   Log.i("XSXGOT", "restarting due to not playing error");
+           // setURI(uri);
+            //return;
+        //}
 
         addView(this.mWaveView);
         addView(this.mUIWave);

@@ -11,6 +11,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "UIView+React.h"
 #import "OGWaveDelegateProtocol.h"
+#import "OGEventEmitter.h"
 @class RCTBridge;
 
 @interface OGWaverformView : UIView<NSURLConnectionDelegate>{
@@ -49,6 +50,7 @@ typedef enum {
 @property(nonatomic) NSString *soundPath;
 //@property(nonatomic) AVAudioPlayer *player ;
 @property(nonatomic) AVPlayer *player ;
+@property (nonatomic) OGEventEmitter *ogEventEmitter;
 @property(nonatomic) NSTimer * playbackTimer;
 @property(nonatomic) id<OGWaveDelegateProtocol> delegate;
 @property (nonatomic, copy) RCTBubblingEventBlock onPress;
