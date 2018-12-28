@@ -90,7 +90,7 @@
     NSURL *soundURL = self.asset.URL;
     NSError *error = nil;
     _player =[[AVPlayer alloc]initWithURL:soundURL];
-//    _player = [[AVBufferPlayer alloc] initWithBuffer:self.bufferData];
+    _ogEventEmitter = [OGEventEmitter new];
     
     // Subscribe to the AVPlayerItem's DidPlayToEndTime notification.
 //    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
@@ -112,6 +112,7 @@
                          frame.origin.x = -_scrubView.frame.size.width/2;
                          _scrubView.frame = frame;
                      }];
+    [_ogEventEmitter itemDidFinishPlaying: notification];
 }
 
 -(void)setAutoPlay:(BOOL)autoPlay{

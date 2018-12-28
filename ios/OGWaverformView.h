@@ -11,7 +11,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <React/UIView+React.h>
 #import "OGWaveDelegateProtocol.h"
-
+#import "OGEventEmitter.h"
 @class RCTBridge;
 
 @interface OGWaverformView : UIView<NSURLConnectionDelegate>{
@@ -54,7 +54,7 @@ typedef enum {
 @property(nonatomic) UIImageView *waveformImage;
 @property(nonatomic) NSString *soundPath;
 @property(nonatomic) AVPlayer *player ;
-//@property(nonatomic) AVBufferPlayer *player ;
+@property (nonatomic) OGEventEmitter *ogEventEmitter;
 @property(nonatomic) NSTimer * playbackTimer;
 @property(nonatomic) id<OGWaveDelegateProtocol> delegate;
 @property (nonatomic, copy) RCTBubblingEventBlock onPress;
