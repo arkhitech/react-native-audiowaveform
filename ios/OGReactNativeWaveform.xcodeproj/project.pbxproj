@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39DF1C4621D6556300C3FF7C /* OGEventEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DF1C4521D6556300C3FF7C /* OGEventEmitter.m */; };
 		474CE2261E24FB69004A0B7A /* OGWaverformView.m in Sources */ = {isa = PBXBuildFile; fileRef = 474CE2241E24FB69004A0B7A /* OGWaverformView.m */; };
 		474CE2301E250AE1004A0B7A /* OGWaveManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 474CE22F1E250AE1004A0B7A /* OGWaveManager.m */; };
 		476E6BB81E25627C007841CD /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 476E6BB71E25627C007841CD /* AVFoundation.framework */; };
@@ -28,6 +29,8 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libOGReactNativeWaveform.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libOGReactNativeWaveform.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		39DF1C4421D6555900C3FF7C /* OGEventEmitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OGEventEmitter.h; sourceTree = "<group>"; };
+		39DF1C4521D6556300C3FF7C /* OGEventEmitter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OGEventEmitter.m; sourceTree = "<group>"; };
 		474CE2231E24FB69004A0B7A /* OGWaverformView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OGWaverformView.h; sourceTree = "<group>"; };
 		474CE2241E24FB69004A0B7A /* OGWaverformView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OGWaverformView.m; sourceTree = "<group>"; };
 		474CE22E1E250AE1004A0B7A /* OGWaveManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OGWaveManager.h; sourceTree = "<group>"; };
@@ -70,6 +73,8 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				39DF1C4421D6555900C3FF7C /* OGEventEmitter.h */,
+				39DF1C4521D6556300C3FF7C /* OGEventEmitter.m */,
 				478380421E2E11EB003E6BFE /* OGWaveDelegateProtocol.h */,
 				478380431E2E11EB003E6BFE /* OGWaveDelegateProtocol.m */,
 				4783803F1E2DF702003E6BFE /* OGWaveUtils.h */,
@@ -139,6 +144,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39DF1C4621D6556300C3FF7C /* OGEventEmitter.m in Sources */,
 				474CE2261E24FB69004A0B7A /* OGWaverformView.m in Sources */,
 				478380441E2E11EB003E6BFE /* OGWaveDelegateProtocol.m in Sources */,
 				478380411E2DF702003E6BFE /* OGWaveUtils.m in Sources */,
