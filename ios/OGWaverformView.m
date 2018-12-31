@@ -77,7 +77,7 @@
     NSURL *soundURL = [NSURL fileURLWithPath:_soundPath];
     NSError *error = nil;
     _player =[[AVPlayer alloc]initWithURL:soundURL];
-    _ogEventEmitter = [OGEventEmitter new];
+    _ogEventEmitter = [OGEventEmitter allocWithZone: nil];
     
     // Subscribe to the AVPlayerItem's DidPlayToEndTime notification.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:_player.currentItem];
