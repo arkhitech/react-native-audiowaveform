@@ -9,6 +9,6 @@
 #import "RCTViewManager.h"
 #import "OGWaveDelegateProtocol.h"
 
-@interface OGWaveManager : RCTViewManager 
+@interface OGWaveManager : RCTViewManager <OGWaveDelegateProtocol>
 
 @end
