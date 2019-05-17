@@ -54,12 +54,12 @@ public class OGWaveView extends FrameLayout {
 
 
 
-    private void sendEvent(ReactContext context, String eventName, WritableMap params) {
-        context
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
+    private void sendEvent(ReactContext context, String eventName, WritableMap params)
+    {
+        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
     }
-    public OGWaveView(ReactContext context) {
+    public OGWaveView(ReactContext context)
+    {
         super(context);
         mContext = context;
 
@@ -309,16 +309,21 @@ public class OGWaveView extends FrameLayout {
 
         @Override
         protected Float doInBackground(Void... params) {
-
             if (mMediaPlayer.isPlaying()) {
+                try
+                {
+                    Float currrentPos = (float) mMediaPlayer.getCurrentPosition()/mMediaPlayer.getDuration();
+                    WritableMap map = new WritableNativeMap();
+                    map.putDouble("currentTime", mMediaPlayer.getCurrentPosition());
+                    sendEvent(mContext, "onPlaybackProgress", map);
+                    return currrentPos;
+                }
+                catch (NullPointerException e)
+                {
+                    // TODO MEDIA PlAYER is null please try again
+                    return null;
+                }
 
-                Float currrentPos = (float) mMediaPlayer.getCurrentPosition()/mMediaPlayer.getDuration();
-
-                WritableMap map = new WritableNativeMap();
-                map.putDouble("currentTime", mMediaPlayer.getCurrentPosition());
-
-                sendEvent(mContext, "onPlaybackProgress", map);
-                return currrentPos;
             }
             return null;
         }
@@ -329,6 +334,13 @@ public class OGWaveView extends FrameLayout {
             if(aFloat != null)
             {
                 mUIWave.updatePlayHead(aFloat);
+            }
+            else
+            {
+                // If Audio not found
+                WritableMap map = new WritableNativeMap();
+                map.putBoolean("error", true);
+                sendEvent(mContext, "onAudioNotFound", map);
             }
         }
     }
