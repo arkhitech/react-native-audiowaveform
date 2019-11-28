@@ -132,21 +132,6 @@ public class OGWaveManager extends SimpleViewManager<OGWaveView> implements Life
         view.setOffsetEnd((long)waveFormStyle.getDouble("ogTimeOffsetEnd"));
     }
 
-   @ReactProp(name = "src")
-    public void setSrc(final OGWaveView view, @Nullable final ReadableMap src) {
-       view.setURI(src.getString("uri"));
-//        Handler newHandler =  new Handler();
-//        newHandler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                view.setURI(src.getString("uri"));
-//            }
-//        }, 1000);
-    }
-
-
-
-
     private static final String PROP_SEEK = "seek";
     @ReactProp(name = PROP_SEEK)
     public void setSeek(OGWaveView view, final float seek) {
@@ -163,20 +148,6 @@ public class OGWaveManager extends SimpleViewManager<OGWaveView> implements Life
         Log.e("XSXGOT","componentID SETTED:::!!!!" +componentID);
         view.setComponentID(componentID);
 
-    }
-
-    @Override
-    public void receiveCommand(OGWaveView view, int commandId, @Nullable ReadableArray args) {
-        super.receiveCommand(view, commandId, args);
-        Log.i("XSXGOT", args.toString());
-
-        if (commandId == 0) {
-            view.seekPosition(args.getInt(0));
-        } else if (commandId == 1) {
-            view.zoomIn();
-        } else if (commandId == 2) {
-            view.zoomOut();
-        }
     }
 
     @ReactProp(name = "autoPlay", defaultBoolean = false)
@@ -294,27 +265,21 @@ public class OGWaveManager extends SimpleViewManager<OGWaveView> implements Life
     }
 
     @Override
-    public void receiveCommand(
-            OGWaveView view,
-            int commandType,
-            @Nullable ReadableArray args) {
-        Assertions.assertNotNull(view);
-        Assertions.assertNotNull(args);
-        switch (commandType) {
-            case COMMAND_SEEK_TO_TIME: {
-                view.CoolMethod(args.getString(0));
-                return;
-            }
-//            case COMMAND_RESET_IMAGE: {
-//                view.reset();
-//                return;
-//            }
+    public void receiveCommand(OGWaveView view, int commandId, @Nullable ReadableArray args) {
+        super.receiveCommand(view, commandId, args);
+        Log.i("XSXGOT", args.toString());
 
-            default:
-                throw new IllegalArgumentException(String.format(
-                        "Unsupported command %d received by %s.",
-                        commandType,
-                        getClass().getSimpleName()));
+        if (commandId == 0) {
+            view.seekPosition(args.getInt(0));
+        } else if (commandId == 1) {
+            view.zoomIn();
+        } else if (commandId == 2) {
+            view.zoomOut();
+        } else {
+          throw new IllegalArgumentException(String.format(
+            "Unsupported command %d received by %s.",
+            commandId,
+            getClass().getSimpleName()));
         }
     }
 }

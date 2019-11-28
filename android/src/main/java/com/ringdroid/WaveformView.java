@@ -236,7 +236,7 @@ public class WaveformView extends View {
                 invalidate();
             }else{
                 Log.e("XSXGOT","soundfile is null");
-                setmURI(mURI);
+                //setmURI(mURI);
             }
 
         }
