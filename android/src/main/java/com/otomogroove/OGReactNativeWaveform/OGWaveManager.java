@@ -128,8 +128,10 @@ public class OGWaveManager extends SimpleViewManager<OGWaveView> implements Life
     public void setWaveFormStyle(OGWaveView view, @Nullable ReadableMap waveFormStyle) {
         view.setmWaveColor(waveFormStyle.getInt("ogWaveColor"));
         view.setScrubColor(waveFormStyle.getInt("ogScrubColor"));
-        view.setOffsetStart((long)waveFormStyle.getDouble("ogTimeOffsetStart"));
-        view.setOffsetEnd((long)waveFormStyle.getDouble("ogTimeOffsetEnd"));
+    }
+    @ReactProp(name = "play")
+    public void setPlay(OGWaveView view, @Nullable boolean play) {
+            view.onPlay(play);
     }
 
     private static final String PROP_SEEK = "seek";
