@@ -93,7 +93,7 @@
     _ogEventEmitter = [OGEventEmitter allocWithZone: nil];
     
     // Subscribe to the AVPlayerItem's DidPlayToEndTime notification.
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
+   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
     
     //_player = [[AVAudioPlayer alloc] initWithContentsOfURL:soundURL fileTypeHint:AVFileTypeAIFF error:&error];
     if (error) {
