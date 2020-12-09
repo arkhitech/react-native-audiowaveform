@@ -50,17 +50,17 @@ import java.net.URLConnection;
 import java.security.SecureRandom;
 
 /**
- * WaveformView is an Android view that displays a visual representation
- * of an audio waveform.  It retrieves the frame gains from a CheapSoundFile
- * object and recomputes the shape contour at several zoom levels.
+ * WaveformView is an Android view that displays a visual representation of an
+ * audio waveform. It retrieves the frame gains from a CheapSoundFile object and
+ * recomputes the shape contour at several zoom levels.
  *
  * This class doesn't handle selection or any of the touch interactions
- * directly, so it exposes a listener interface.  The class that embeds
- * this view should add itself as a listener and make the view scroll
- * and respond to other events appropriately.
+ * directly, so it exposes a listener interface. The class that embeds this view
+ * should add itself as a listener and make the view scroll and respond to other
+ * events appropriately.
  *
- * WaveformView doesn't actually handle selection, but it will just display
- * the selected part of the waveform in a different color.
+ * WaveformView doesn't actually handle selection, but it will just display the
+ * selected part of the waveform in a different color.
  */
 public class WaveformView extends View {
 
@@ -68,39 +68,35 @@ public class WaveformView extends View {
     private long mEndOffset;
     private boolean mOffsetsBeingSet;
 
-    public void setmURI(String mURI, long startOffset, long endOffset)
-    {
+    public void setmURI(String mURI, long startOffset, long endOffset) {
         this.mURI = mURI;
 
         this.setOffsets(startOffset, endOffset);
 
-//        String filePath = Environment.getExternalStorageDirectory().toString() + "/"+random()+".wav";
-//        new DownloadFileFromURL().execute(this.mURI,filePath);
+        // String filePath = Environment.getExternalStorageDirectory().toString() +
+        // "/"+random()+".wav";
+        // new DownloadFileFromURL().execute(this.mURI,filePath);
     }
 
-    public void resetState()
-    {
+    public void resetState() {
         this.mURI = null;
         this.mOffsetsBeingSet = false;
     }
 
-    public void setOffsets(long startOffset, long endOffset)
-    {
+    public void setOffsets(long startOffset, long endOffset) {
         this.mStartOffset = startOffset;
         this.mEndOffset = endOffset;
         this.mOffsetsBeingSet = true;
         this.processAudio();
     }
 
-    public void processAudio()
-    {
-        if (this.mURI == null || this.mOffsetsBeingSet == false)
-        {
+    public void processAudio() {
+        if (this.mURI == null || this.mOffsetsBeingSet == false) {
             return;
         }
 
-        String filePath = Environment.getExternalStorageDirectory().toString() + "/"+random()+".wav";
-        new DownloadFileFromURL().execute(this.mURI,filePath);
+        String filePath = mContext.getFilesDir().getAbsolutePath() + "/" + random() + ".wav";
+        new DownloadFileFromURL().execute(this.mURI, filePath);
     }
 
     public void setmWaveColor(int mWaveColor) {
@@ -111,15 +107,12 @@ public class WaveformView extends View {
 
     /**
      * Background Async Task to download file
-     * */
+     */
     class DownloadFileFromURL extends AsyncTask<String, String, SoundFile> {
-
-
-
 
         /**
          * Before starting background thread Show Progress Bar Dialog
-         * */
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -128,13 +121,13 @@ public class WaveformView extends View {
 
         /**
          * Downloading file in background thread
-         * */
+         */
         @Override
         protected SoundFile doInBackground(String... f_url) {
             Log.i("XSXGOT", "downloading from background");
             int count;
             String filePath = f_url[1];
-            String tempPath = Environment.getExternalStorageDirectory().toString() + "/"+"temp"+".wav";
+            String tempPath = mContext.getFilesDir().getAbsolutePath() + "/" + "temp" + ".wav";
 
             SoundFile soundFile = null;
             try {
@@ -147,8 +140,7 @@ public class WaveformView extends View {
                 int lenghtOfFile = conection.getContentLength();
 
                 // download the file
-                InputStream input = new BufferedInputStream(url.openStream(),
-                        8192);
+                InputStream input = new BufferedInputStream(url.openStream(), 8192);
 
                 // Output stream
                 OutputStream output = new FileOutputStream(tempPath);
@@ -181,15 +173,15 @@ public class WaveformView extends View {
                     }
                 };
 
-                CheapSoundFile cheapSoundFile = CheapSoundFile.create(tempPath,listener);
+                CheapSoundFile cheapSoundFile = CheapSoundFile.create(tempPath, listener);
                 int mSampleRate = cheapSoundFile.getSampleRate();
                 int mSamplesPerFrame = cheapSoundFile.getSamplesPerFrame();
-                double mTotalTime = ((double)cheapSoundFile.getFileSizeBytes() / (mSampleRate * 2));
-                int startFrame = Utilities.secondsToFrames(mStartOffset/1000,mSampleRate, mSamplesPerFrame);
-                int endFrame = Utilities.secondsToFrames(mEndOffset/1000, mSampleRate,mSamplesPerFrame);
-                int sizeFrame = Utilities.secondsToFrames(mTotalTime, mSampleRate,mSamplesPerFrame);
-                cheapSoundFile.WriteFile( new File(filePath), startFrame, (sizeFrame - endFrame) - startFrame);
-                Log.e("XSXGOT","Audio file complented + "+filePath);
+                double mTotalTime = ((double) cheapSoundFile.getFileSizeBytes() / (mSampleRate * 2));
+                int startFrame = Utilities.secondsToFrames(mStartOffset / 1000, mSampleRate, mSamplesPerFrame);
+                int endFrame = Utilities.secondsToFrames(mEndOffset / 1000, mSampleRate, mSamplesPerFrame);
+                int sizeFrame = Utilities.secondsToFrames(mTotalTime, mSampleRate, mSamplesPerFrame);
+                cheapSoundFile.WriteFile(new File(filePath), startFrame, (sizeFrame - endFrame) - startFrame);
+                Log.e("XSXGOT", "Audio file complented + " + filePath);
             } catch (Exception e) {
                 Log.e("XSXGOT Error: ", e.getMessage());
                 filePath = f_url[0];
@@ -205,58 +197,63 @@ public class WaveformView extends View {
             }
 
             // Can't delete file as it's used for the media player
-//
-//            File f0 = new File(filePath);
-//            boolean d0 = f0.delete();
-//            Log.w("Delete Check", "File deleted: " + d0);
+            //
+            // File f0 = new File(filePath);
+            // boolean d0 = f0.delete();
+            // Log.w("Delete Check", "File deleted: " + d0);
 
             return soundFile;
         }
 
         /**
          * Updating progress bar
-         * */
+         */
         protected void onProgressUpdate(String... progress) {
             // setting progress percentage
 
         }
 
-
-
         /**
          * After completing background task Dismiss the progress dialog
-         * **/
+         **/
         @Override
         protected void onPostExecute(SoundFile soundFile) {
             // dismiss the dialog after the file was downloaded
-            if(soundFile!=null) {
-                Log.i("XSXGOT","soundfile is not null");
+            if (soundFile != null) {
+                Log.i("XSXGOT", "soundfile is not null");
                 setSoundFile(soundFile);
                 recomputeHeights(8f);
                 invalidate();
-            }else{
-                Log.e("XSXGOT","soundfile is null");
-                //setmURI(mURI);
+            } else {
+                Log.e("XSXGOT", "soundfile is null");
+                // setmURI(mURI);
             }
 
         }
 
     }
 
-
-    private   String random() {
+    private String random() {
         return new BigInteger(130, new SecureRandom()).toString(32);
     }
 
     public interface WaveformListener {
         public void waveformTouchStart(ReactContext context, String componentID);
+
         public void waveformFinishPlay(ReactContext context, String componentID);
+
         public void waveformTouchStart(float x);
+
         public void waveformTouchMove(float x);
+
         public void waveformTouchEnd();
+
         public void waveformFling(float x);
+
         public void waveformDraw();
+
         public void waveformZoomIn();
+
         public void waveformZoomOut();
     };
 
@@ -296,9 +293,7 @@ public class WaveformView extends View {
     private OGWaveView waveView;
 
     private void sendEvent(ReactContext context, String eventName, WritableMap params) {
-        context
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
+        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
     }
 
     public WaveformView(ReactContext context, OGWaveView waveView) {
@@ -322,7 +317,7 @@ public class WaveformView extends View {
         mSelectedLinePaint.setColor(Color.WHITE);
         mUnselectedLinePaint = new Paint();
         mUnselectedLinePaint.setAntiAlias(false);
-        //mUnselectedLinePaint.setColor(Color.WHITE);
+        // mUnselectedLinePaint.setColor(Color.WHITE);
         mUnselectedBkgndLinePaint = new Paint();
         mUnselectedBkgndLinePaint.setAntiAlias(false);
         mUnselectedBkgndLinePaint.setColor(Color.TRANSPARENT);
@@ -340,10 +335,6 @@ public class WaveformView extends View {
         mTimecodePaint.setColor(Color.BLUE);
         mTimecodePaint.setShadowLayer(2, 1, 1, Color.GRAY);
 
-
-
-
-
         mSoundFile = null;
         mLenByZoomLevel = null;
         mValuesByZoomLevel = null;
@@ -355,8 +346,6 @@ public class WaveformView extends View {
         mDensity = 1.0f;
         mInitialized = false;
     }
-
-
 
     public boolean hasSoundFile() {
         return mSoundFile != null;
@@ -375,8 +364,6 @@ public class WaveformView extends View {
     public boolean isInitialized() {
         return mInitialized;
     }
-
-
 
     public void setZoomLevel(int zoomLevel) {
         while (mZoomLevel > zoomLevel) {
@@ -430,29 +417,27 @@ public class WaveformView extends View {
     }
 
     public int secondsToFrames(double seconds) {
-        return (int)(1.0 * seconds * mSampleRate / mSamplesPerFrame + 0.5);
+        return (int) (1.0 * seconds * mSampleRate / mSamplesPerFrame + 0.5);
     }
 
     public int secondsToPixels(double seconds) {
         double z = mZoomFactorByZoomLevel[mZoomLevel];
-        return (int)(z * seconds * mSampleRate / mSamplesPerFrame + 0.5);
+        return (int) (z * seconds * mSampleRate / mSamplesPerFrame + 0.5);
     }
 
     public double pixelsToSeconds(int pixels) {
         double z = mZoomFactorByZoomLevel[mZoomLevel];
-        return (pixels * (double)mSamplesPerFrame / (mSampleRate * z));
+        return (pixels * (double) mSamplesPerFrame / (mSampleRate * z));
     }
 
     public int millisecsToPixels(int msecs) {
         double z = mZoomFactorByZoomLevel[mZoomLevel];
-        return (int)((msecs * 1.0 * mSampleRate * z) /
-                (1000.0 * mSamplesPerFrame) + 0.5);
+        return (int) ((msecs * 1.0 * mSampleRate * z) / (1000.0 * mSamplesPerFrame) + 0.5);
     }
 
     public int pixelsToMillisecs(int pixels) {
         double z = mZoomFactorByZoomLevel[mZoomLevel];
-        return (int)(pixels * (1000.0 * mSamplesPerFrame) /
-                (mSampleRate * z) + 0.5);
+        return (int) (pixels * (1000.0 * mSamplesPerFrame) / (mSampleRate * z) + 0.5);
     }
 
     public void setParameters(int start, int end, int offset) {
@@ -484,14 +469,12 @@ public class WaveformView extends View {
     public void recomputeHeights(float density) {
         mHeightsAtThisZoomLevel = null;
         mDensity = density;
-        mTimecodePaint.setTextSize((int)(12 * density));
+        mTimecodePaint.setTextSize((int) (12 * density));
 
         invalidate();
     }
 
-    protected void drawWaveformLine(Canvas canvas,
-                                    int x, int y0, int y1,
-                                    Paint paint) {
+    protected void drawWaveformLine(Canvas canvas, int x, int y0, int y1, Paint paint) {
         canvas.drawLine(x, y0, x, y1, paint);
     }
 
@@ -499,15 +482,11 @@ public class WaveformView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-
         if (mSoundFile == null)
             return;
 
         if (mHeightsAtThisZoomLevel == null)
             computeIntsForThisZoomLevel();
-
-
-
 
         // Draw waveform
         int measuredWidth = getMeasuredWidth();
@@ -520,28 +499,20 @@ public class WaveformView extends View {
         if (width > measuredWidth)
             width = measuredWidth;
 
-
         int i = 0;
         // Draw waveform
 
-
-
         for (i = 0; i < measuredWidth; i++) {
 
-            int stretchedwidthPos =  Math.round((i*width)/measuredWidth);
+            int stretchedwidthPos = Math.round((i * width) / measuredWidth);
             Paint paint;
 
             paint = mUnselectedLinePaint;
 
-            drawWaveformLine(
-                    canvas, i,
-                    ctr - mHeightsAtThisZoomLevel[start + stretchedwidthPos],
-                    ctr + 1 + mHeightsAtThisZoomLevel[start + stretchedwidthPos],
-                    paint);
-
+            drawWaveformLine(canvas, i, ctr - mHeightsAtThisZoomLevel[start + stretchedwidthPos],
+                    ctr + 1 + mHeightsAtThisZoomLevel[start + stretchedwidthPos], paint);
 
         }
-
 
     }
 
@@ -550,8 +521,7 @@ public class WaveformView extends View {
      */
     private void computeDoublesForAllZoomLevels() {
 
-
-        Log.e("XSXGOT","computeDoublesForAllZoomLevels");
+        Log.e("XSXGOT", "computeDoublesForAllZoomLevels");
         int numFrames = mSoundFile.getNumFrames();
         int[] frameGains = mSoundFile.getFrameGains();
         double[] smoothedGains = new double[numFrames];
@@ -561,18 +531,13 @@ public class WaveformView extends View {
             smoothedGains[0] = frameGains[0];
             smoothedGains[1] = frameGains[1];
         } else if (numFrames > 2) {
-            smoothedGains[0] = (double)(
-                    (frameGains[0] / 2.0) +
-                            (frameGains[1] / 2.0));
+            smoothedGains[0] = (double) ((frameGains[0] / 2.0) + (frameGains[1] / 2.0));
             for (int i = 1; i < numFrames - 1; i++) {
-                smoothedGains[i] = (double)(
-                        (frameGains[i - 1] / 3.0) +
-                                (frameGains[i    ] / 3.0) +
-                                (frameGains[i + 1] / 3.0));
+                smoothedGains[i] = (double) ((frameGains[i - 1] / 3.0) + (frameGains[i] / 3.0)
+                        + (frameGains[i + 1] / 3.0));
             }
-            smoothedGains[numFrames - 1] = (double)(
-                    (frameGains[numFrames - 2] / 2.0) +
-                            (frameGains[numFrames - 1] / 2.0));
+            smoothedGains[numFrames
+                    - 1] = (double) ((frameGains[numFrames - 2] / 2.0) + (frameGains[numFrames - 1] / 2.0));
         }
 
         // Make sure the range is no more than 0 - 255
@@ -591,7 +556,7 @@ public class WaveformView extends View {
         maxGain = 0;
         int gainHist[] = new int[256];
         for (int i = 0; i < numFrames; i++) {
-            int smoothedGain = (int)(smoothedGains[i] * scaleFactor);
+            int smoothedGain = (int) (smoothedGains[i] * scaleFactor);
             if (smoothedGain < 0)
                 smoothedGain = 0;
             if (smoothedGain > 255)
@@ -607,14 +572,14 @@ public class WaveformView extends View {
         double minGain = 0;
         int sum = 0;
         while (minGain < 255 && sum < numFrames / 20) {
-            sum += gainHist[(int)minGain];
+            sum += gainHist[(int) minGain];
             minGain++;
         }
 
         // Re-calibrate the max to be 99%
         sum = 0;
         while (maxGain > 2 && sum < numFrames / 100) {
-            sum += gainHist[(int)maxGain];
+            sum += gainHist[(int) maxGain];
             maxGain--;
         }
 
@@ -662,9 +627,8 @@ public class WaveformView extends View {
             mValuesByZoomLevel[j] = new double[mLenByZoomLevel[j]];
             mZoomFactorByZoomLevel[j] = mZoomFactorByZoomLevel[j - 1] / 2.0;
             for (int i = 0; i < mLenByZoomLevel[j]; i++) {
-                mValuesByZoomLevel[j][i] =
-                        0.5 * (mValuesByZoomLevel[j - 1][2 * i] +
-                                mValuesByZoomLevel[j - 1][2 * i + 1]);
+                mValuesByZoomLevel[j][i] = 0.5
+                        * (mValuesByZoomLevel[j - 1][2 * i] + mValuesByZoomLevel[j - 1][2 * i + 1]);
             }
         }
 
@@ -684,15 +648,14 @@ public class WaveformView extends View {
     }
 
     /**
-     * Called the first time we need to draw when the zoom level has changed
-     * or the screen is resized
+     * Called the first time we need to draw when the zoom level has changed or the
+     * screen is resized
      */
     private void computeIntsForThisZoomLevel() {
         int halfHeight = (getMeasuredHeight() / 2) - 1;
         mHeightsAtThisZoomLevel = new int[mLenByZoomLevel[mZoomLevel]];
         for (int i = 0; i < mLenByZoomLevel[mZoomLevel]; i++) {
-            mHeightsAtThisZoomLevel[i] =
-                    (int)(mValuesByZoomLevel[mZoomLevel][i] * halfHeight);
+            mHeightsAtThisZoomLevel[i] = (int) (mValuesByZoomLevel[mZoomLevel][i] * halfHeight);
         }
     }
 }
